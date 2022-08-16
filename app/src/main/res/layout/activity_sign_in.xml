@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="이 프로젝트는 넵플러스 양성반 \n 최종프로젝트 입니다."
+        android:text="이 프로젝트는 넵플러스 코틀린/안드로이드 \n 최종프로젝트 입니다."
         android:gravity="center"
         android:layout_marginTop="10dp"/>
 

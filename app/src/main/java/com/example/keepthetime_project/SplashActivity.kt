@@ -1,22 +1,16 @@
 package com.example.keepthetime_project
 
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.keepthetime_project.databinding.ActivityMainBinding
+import com.example.keepthetime_project.databinding.ActivitySplashBinding
 
-class MainActivity : BaseActivity() {
+class SplashActivity : BaseActivity() {
 
-    private lateinit var binding : ActivityMainBinding
-
+    private lateinit var binding : ActivitySplashBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        setEvents()
-        setValues()
-
-
     }
 
     override fun setEvents() {
