@@ -1,5 +1,6 @@
 package com.example.keepthetime_project
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.widget.Toast
 import com.example.keepthetime_project.databinding.ActivityMainBinding
 import com.example.keepthetime_project.databinding.ActivitySignInBinding
 import com.example.keepthetime_project.datas.BasicResponse
+import com.example.keepthetime_project.utils.ContextUtil
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,6 +42,13 @@ class SignInActivity : BaseActivity() {
                     if(response.isSuccessful){
                         response.body()?.let {
                             Toast.makeText(mContext, "${it.data.user.nick_name} 님 환영합니다.", Toast.LENGTH_SHORT).show()
+
+                            ContextUtil.setLoginUserToken(mContext, it.data.token)
+
+                            val myIntent = Intent(mContext, MainActivity::class.java)
+                            startActivity(myIntent)
+                            finish()
+
                         }
                     }else{
                         response.errorBody()?.let {
