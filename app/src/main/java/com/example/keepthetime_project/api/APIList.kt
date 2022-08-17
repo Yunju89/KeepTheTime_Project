@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface APIList {
 
@@ -14,6 +15,14 @@ interface APIList {
     fun postRequestLogin(
         @Field("email") email : String,
         @Field("password") pw : String
+    ) : Call<BasicResponse>
+
+    @FormUrlEncoded
+    @PUT("/user")
+    fun putRequestSignup(
+        @Field("email") email: String,
+        @Field("password") pw : String,
+        @Field("nick_name") nickName : String
     ) : Call<BasicResponse>
 
 }
