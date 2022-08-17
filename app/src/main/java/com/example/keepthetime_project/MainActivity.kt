@@ -1,11 +1,14 @@
 package com.example.keepthetime_project
 
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
+import com.example.keepthetime_project.api.MainViewPagerAdapter
 import com.example.keepthetime_project.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity() {
 
     private lateinit var binding : ActivityMainBinding
+    private lateinit var mAdapter : MainViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +27,10 @@ class MainActivity : BaseActivity() {
     }
 
     override fun setValues() {
+
+        mAdapter = MainViewPagerAdapter(this)
+        binding.viewpager.adapter = mAdapter
+
 
     }
 }
