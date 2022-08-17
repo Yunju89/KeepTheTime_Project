@@ -1,5 +1,6 @@
 package com.example.keepthetime_project
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -40,20 +41,33 @@ class SignInActivity : BaseActivity() {
                         response.body()?.let {
                             Toast.makeText(mContext, "${it.data.user.nick_name} 님 환영합니다.", Toast.LENGTH_SHORT).show()
                         }
+                    }else{
+                        response.errorBody()?.let {
+                            val jsonObj = JSONObject(response.errorBody().toString())
+                            val message = jsonObj.getString("message")
+                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+                        }
                     }
 
                 }
 
                 override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
 
+                }
 
             })
 
         }
 
+
+        binding.btnSignup.setOnClickListener {
+            val myIntent = Intent(mContext, SignupActivity::class.java)
+            startActivity(myIntent)
+        }
+
     }
+
+
 
     override fun setValues() {
 
