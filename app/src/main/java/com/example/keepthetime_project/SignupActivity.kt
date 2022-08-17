@@ -1,11 +1,11 @@
 package com.example.keepthetime_project
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.example.keepthetime_project.databinding.ActivitySignupBinding
 import com.example.keepthetime_project.datas.BasicResponse
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,6 +54,49 @@ class SignupActivity : BaseActivity() {
 
 
         }
+
+        binding.btnEmailCheck.setOnClickListener {
+
+            val inputEmail = binding.edtEmail.text.toString()
+
+            if(inputEmail.isEmpty()){
+                Toast.makeText(mContext, "이메일을 입력하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            else{
+                apiList.getRequestUserCheck("EMAIL", inputEmail).enqueue(object : Callback<BasicResponse>{
+                    override fun onResponse(
+                        call: Call<BasicResponse>,
+                        response: Response<BasicResponse>
+                    ) {
+                        if(response.isSuccessful){
+                            response.body()?.let {
+                                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+                                Log.d("yj", it.message)
+                            }
+                        }else{
+                            response.errorBody()?.let {
+                                val jsonObj = JSONObject(it.string())
+                                val message = jsonObj.getString("message")
+
+                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+                                Log.d("yj", message)
+
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+                    }
+
+                })
+            }
+            
+
+            
+        }
+
     }
 
     override fun setValues() {

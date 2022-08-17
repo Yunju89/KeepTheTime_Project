@@ -1,12 +1,8 @@
 package com.example.keepthetime_project
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import com.example.keepthetime_project.databinding.ActivityMainBinding
 import com.example.keepthetime_project.databinding.ActivitySignInBinding
 import com.example.keepthetime_project.datas.BasicResponse
 import com.example.keepthetime_project.utils.ContextUtil
@@ -52,7 +48,7 @@ class SignInActivity : BaseActivity() {
                         }
                     }else{
                         response.errorBody()?.let {
-                            val jsonObj = JSONObject(response.errorBody().toString())
+                            val jsonObj = JSONObject(it.string())
                             val message = jsonObj.getString("message")
                             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
                         }

@@ -3,10 +3,7 @@ package com.example.keepthetime_project.api
 import com.example.keepthetime_project.datas.BasicResponse
 import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
-import retrofit2.http.PUT
+import retrofit2.http.*
 
 interface APIList {
 
@@ -23,6 +20,12 @@ interface APIList {
         @Field("email") email: String,
         @Field("password") pw : String,
         @Field("nick_name") nickName : String
+    ) : Call<BasicResponse>
+
+    @GET("/user/check")
+    fun getRequestUserCheck(
+        @Query("type") type : String,
+        @Query("value") email : String
     ) : Call<BasicResponse>
 
 }
