@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.keepthetime_project.api.APIList
 import com.example.keepthetime_project.api.ServerAPI
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity() : AppCompatActivity() {
 
     lateinit var mContext : Context
 
