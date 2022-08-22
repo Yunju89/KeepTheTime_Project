@@ -1,9 +1,9 @@
 package com.example.keepthetime_project
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import com.example.keepthetime_project.api.MainViewPagerAdapter
 import com.example.keepthetime_project.databinding.ActivityMainBinding
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : BaseActivity() {
 
@@ -31,6 +31,12 @@ class MainActivity : BaseActivity() {
         mAdapter = MainViewPagerAdapter(this)
         binding.viewpager.adapter = mAdapter
 
+        TabLayoutMediator(binding.tabLayout, binding.viewpager){ tab, position ->
+            when(position){
+                0 -> tab.text = "약속목록"
+                1 -> tab.text = "내프로필"
+            }
+        }.attach()
 
     }
 }
