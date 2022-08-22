@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.45925925925925926" />
+        <entry key="app/src/main/res/layout/activity_manage_my_friends.xml" value="0.2048611111111111" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.38796296296296295" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.5135416666666667" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.49947916666666664" />
         <entry key="app/src/main/res/layout/fragment_appointment.xml" value="0.5056410256410256" />
         <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.5056410256410256" />
+        <entry key="app/src/main/res/layout/my_friend_list_item.xml" value="0.2048611111111111" />
       </map>
     </option>
   </component>

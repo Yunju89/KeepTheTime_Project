@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.keepthetime_project.ManageMyFriendsActivity
 import com.example.keepthetime_project.SignInActivity
 import com.example.keepthetime_project.databinding.FragmentMyProfileBinding
 import com.example.keepthetime_project.datas.BasicResponse
@@ -58,7 +59,14 @@ class MyProfileFragment : BaseFragment() {
                 .show()
         }
 
+
+        binding.btnManageMyFriends.setOnClickListener {
+            val myIntent = Intent(mContext, ManageMyFriendsActivity::class.java)
+            startActivity(myIntent)
+        }
+
     }
+
 
     override fun setValues() {
 
