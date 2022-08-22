@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.example.keepthetime_project.R
 import com.example.keepthetime_project.databinding.FragmentAppointmentBinding
 
-class AppointmentFragment : Fragment() {
+class AppointmentFragment : BaseFragment() {
 
     private var mBinding : FragmentAppointmentBinding? = null
     private val binding get() = mBinding!!
@@ -24,6 +24,17 @@ class AppointmentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setEvents()
+        setValues()
+
+    }
+
+    override fun setEvents() {
+
+    }
+
+    override fun setValues() {
 
     }
 

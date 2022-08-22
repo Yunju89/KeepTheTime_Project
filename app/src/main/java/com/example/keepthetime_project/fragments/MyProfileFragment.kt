@@ -9,7 +9,7 @@ import com.example.keepthetime_project.R
 import com.example.keepthetime_project.databinding.FragmentAppointmentBinding
 import com.example.keepthetime_project.databinding.FragmentMyProfileBinding
 
-class MyProfileFragment : Fragment() {
+class MyProfileFragment : BaseFragment() {
 
     private var mBinding : FragmentMyProfileBinding? = null
     private val binding get() = mBinding!!
@@ -25,6 +25,17 @@ class MyProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setEvents()
+        setValues()
+
+    }
+
+    override fun setEvents() {
+
+    }
+
+    override fun setValues() {
 
     }
 
