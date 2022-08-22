@@ -32,4 +32,6 @@ interface APIList {
     fun getRequestMyInfo(
         @Header("X-Http-Token") Token : String
     ) : Call<BasicResponse>
+
+
 }
