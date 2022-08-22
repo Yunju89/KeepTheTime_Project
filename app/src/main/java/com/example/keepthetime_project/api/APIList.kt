@@ -28,4 +28,8 @@ interface APIList {
         @Query("value") email : String
     ) : Call<BasicResponse>
 
+    @GET("/user")
+    fun getRequestMyInfo(
+        @Header("X-Http-Token") Token : String
+    ) : Call<BasicResponse>
 }

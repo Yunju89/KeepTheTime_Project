@@ -27,6 +27,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginTop="5dp">
+
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"

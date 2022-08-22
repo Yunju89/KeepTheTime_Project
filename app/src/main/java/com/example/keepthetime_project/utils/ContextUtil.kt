@@ -15,9 +15,9 @@ class ContextUtil {
             pref.edit().putString(LOGIN_USER_TOKEN, token).apply()
         }
 
-        fun getLoginUserToken(context: Context) : String? {
+        fun getLoginUserToken(context: Context) : String {
             val pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-            return pref.getString(LOGIN_USER_TOKEN, "")
+            return pref.getString(LOGIN_USER_TOKEN, "")!!
         }
 
 
