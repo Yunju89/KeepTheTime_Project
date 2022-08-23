@@ -1,5 +1,6 @@
 package com.example.keepthetime_project
 
+import android.content.Intent
 import android.os.Bundle
 import com.example.keepthetime_project.adapters.MyFriendAdapter
 import com.example.keepthetime_project.databinding.ActivityManageMyFriendsBinding
@@ -29,6 +30,11 @@ class ManageMyFriendsActivity : BaseActivity() {
     }
 
     override fun setEvents() {
+
+        binding.btnAddFriend.setOnClickListener {
+            val myIntent = Intent(mContext, SearchUserActivity::class.java)
+            startActivity(myIntent)
+        }
 
     }
 
