@@ -39,4 +39,10 @@ interface APIList {
         @Query("type") type : String
     ) : Call<BasicResponse>
 
+
+    @GET("/search/user")
+    fun getRequestSearchUser(
+        @Header("X-Http-Token") Token : String,
+        @Query("nickname") nickname : String
+    ) : Call<BasicResponse>
 }
