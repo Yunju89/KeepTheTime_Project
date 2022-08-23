@@ -19,6 +19,12 @@ class SearchUserActivity : BaseActivity() {
 
     override fun setEvents() {
 
+        binding.btnSearch.setOnClickListener {
+            val inputNickName = binding.edtNickname.text.toString()
+
+
+        }
+
     }
 
     override fun setValues() {
