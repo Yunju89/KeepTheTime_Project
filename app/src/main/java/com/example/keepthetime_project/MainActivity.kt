@@ -1,7 +1,7 @@
 package com.example.keepthetime_project
 
 import android.os.Bundle
-import com.example.keepthetime_project.api.MainViewPagerAdapter
+import com.example.keepthetime_project.adapters.MainViewPagerAdapter
 import com.example.keepthetime_project.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 

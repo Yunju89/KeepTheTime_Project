@@ -1,4 +1,4 @@
-package com.example.keepthetime_project.api
+package com.example.keepthetime_project.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

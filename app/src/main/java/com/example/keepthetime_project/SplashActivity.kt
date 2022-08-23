@@ -56,6 +56,7 @@ class SplashActivity : BaseActivity() {
             }
 
             startActivity(myIntent)
+            finish()
 
         }, 2500)
 
