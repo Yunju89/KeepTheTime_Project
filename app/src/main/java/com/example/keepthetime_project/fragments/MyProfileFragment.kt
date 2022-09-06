@@ -74,10 +74,12 @@ class MyProfileFragment : BaseFragment() {
             override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
                 if(response.isSuccessful){
                     response.body()?.let {
-                        Log.d("yj", "LoginUser : ${it.data.user.nick_name}")
+                        it.data?.let {  dataResponse ->
+                            Log.d("yj", "LoginUser : ${dataResponse.user.nick_name}")
 
-                        binding.txtNickname.text = it.data.user.nick_name
-                        Glide.with(mContext).load(it.data.user.profile_img).into(binding.imgProfile)
+                            binding.txtNickname.text = dataResponse.user.nick_name
+                            Glide.with(mContext).load(dataResponse.user.profile_img).into(binding.imgProfile)
+                        }
 
                     }
                 }

@@ -67,7 +67,7 @@ class SignupActivity : BaseActivity() {
                         if(response.isSuccessful){
                             response.body()?.let {
                                 Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
-                                Log.d("yj", it.message)
+                                it.message?.let { it1 -> Log.d("yj", it1) }
                             }
                         }else{
                             response.errorBody()?.let {

@@ -41,7 +41,7 @@ class SearchUserActivity : BaseActivity() {
 
                     if(response.isSuccessful){
                         response.body()?.let {
-                            mSearchUserList.addAll(it.data.users)
+                            it.data?.let { it1 -> mSearchUserList.addAll(it1.users) }
                             mAdapter.notifyDataSetChanged()
                         }
                     }

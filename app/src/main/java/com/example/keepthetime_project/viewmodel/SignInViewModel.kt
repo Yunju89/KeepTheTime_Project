@@ -18,13 +18,6 @@ class SignInViewModel : ViewModel() {
     val isSignIn: LiveData<BasicResponse>
         get() = _isSignIn
 
-    private var _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String>
-        get() = _errorMessage
-
-    init {
-        _errorMessage.value = ""
-    }
 
     fun getSignIn(context: Context, inputEmail: String, inputPw: String) {
 
@@ -37,7 +30,7 @@ class SignInViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         response.body()?.let {
                             _isSignIn.value = it
-                            ContextUtil.setLoginUserToken(context, it.data.token)
+                            it.data?.let { it1 -> ContextUtil.setLoginUserToken(context, it1.token) }
 
 
                         }
@@ -45,8 +38,8 @@ class SignInViewModel : ViewModel() {
                         response.errorBody()?.let {
                             val jsonObj = JSONObject(it.string())
                             val message = jsonObj.getString("message")
-
-                            _errorMessage.value = message
+                            val basicResponse = BasicResponse(message = message)
+                            _isSignIn.value = basicResponse
 
                         }
                     }

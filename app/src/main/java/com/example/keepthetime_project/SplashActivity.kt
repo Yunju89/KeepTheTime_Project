@@ -20,23 +20,20 @@ class SplashActivity : BaseActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        splashViewModel = ViewModelProvider(this)[SplashViewModel::class.java]
+
         setValues()
         setEvents()
     }
 
     override fun setEvents() {
-
-    }
-
-    override fun setValues() {
-
-        splashViewModel = ViewModelProvider(this)[SplashViewModel::class.java]
-        splashViewModel.getMyInfo(this)
         splashViewModel.isMyInfoLoaded.observe(this, Observer {
             isMyInfoLoaded = it
         })
+    }
 
-
+    override fun setValues() {
+        splashViewModel.getMyInfo(this)
 
 
         val myHandler = Handler(Looper.getMainLooper())

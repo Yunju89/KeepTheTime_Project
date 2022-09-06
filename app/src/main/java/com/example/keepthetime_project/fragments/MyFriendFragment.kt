@@ -54,7 +54,7 @@ class MyFriendFragment : BaseFragment() {
                 if(response.isSuccessful){
                     response.body()?.let {
                         myFriendList.clear()
-                        myFriendList.addAll(it.data.friends)
+                        it.data?.let { it1 -> myFriendList.addAll(it1.friends) }
 
                         mFriendAdapter.notifyDataSetChanged()
                     }
