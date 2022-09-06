@@ -1,8 +1,9 @@
 package com.example.keepthetime_project.datas
 
 class BasicResponse(
-    val code : Int,
-    val message : String,
+    var code : Int,
+    var message : String,
     val data : DataResponse
 ) {
+
 }

@@ -3,8 +3,11 @@ package com.example.keepthetime_project
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.keepthetime_project.databinding.ActivitySignupBinding
 import com.example.keepthetime_project.datas.BasicResponse
+import com.example.keepthetime_project.viewmodel.SignUpViewModel
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,6 +16,8 @@ import retrofit2.Response
 class SignupActivity : BaseActivity() {
 
     private lateinit var binding : ActivitySignupBinding
+    lateinit var sighUpViewModel: SignUpViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
@@ -31,26 +36,16 @@ class SignupActivity : BaseActivity() {
             val inputPw = binding.edtPassword.text.toString()
             val inputNickname = binding.edtNickname.text.toString()
 
-            apiList.putRequestSignup(inputEmail,inputPw,inputNickname).enqueue(object : Callback<BasicResponse>{
-                override fun onResponse(
-                    call: Call<BasicResponse>,
-                    response: Response<BasicResponse>
-                ) {
-                    if(response.isSuccessful){
-                        response.body()?.let{
-                            Toast.makeText(mContext, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show()
-                            Log.d("yj", it.message)
-                            finish()
-                        }
-                    }
-                }
+            sighUpViewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
+            sighUpViewModel.getSighUp(inputEmail, inputPw, inputNickname)
+            sighUpViewModel.sighUpSuccess.observe(this, Observer {
 
-                override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-
+                if(it == true){
+                    Toast.makeText(this, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
 
             })
-
 
 
         }

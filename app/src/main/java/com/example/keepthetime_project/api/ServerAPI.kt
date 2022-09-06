@@ -10,6 +10,8 @@ class ServerAPI {
         private var retrofit : Retrofit? = null
         private var BASE_URL = "https://keepthetime.xyz"
 
+        fun apiList() : APIList = getRetrofit().create(APIList::class.java)
+
         fun getRetrofit() : Retrofit{
 
             if(retrofit == null){
@@ -21,5 +23,8 @@ class ServerAPI {
 
             return retrofit!!
         }
+
+
+
     }
 }

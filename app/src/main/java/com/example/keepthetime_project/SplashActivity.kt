@@ -4,16 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.keepthetime_project.databinding.ActivitySplashBinding
-import com.example.keepthetime_project.datas.BasicResponse
-import com.example.keepthetime_project.utils.ContextUtil
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.keepthetime_project.viewmodel.SplashViewModel
 
 class SplashActivity : BaseActivity() {
 
     private lateinit var binding : ActivitySplashBinding
+    var isMyInfoLoaded = false
+    lateinit var splashViewModel : SplashViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -29,21 +30,14 @@ class SplashActivity : BaseActivity() {
 
     override fun setValues() {
 
-        var isMyInfoLoaded = false
-
-        apiList.getRequestMyInfo(ContextUtil.getLoginUserToken(mContext)).enqueue(object : Callback<BasicResponse>{
-            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
-                if(response.isSuccessful){
-                    isMyInfoLoaded = true
-
-                }
-            }
-
-            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-
-            }
-
+        splashViewModel = ViewModelProvider(this)[SplashViewModel::class.java]
+        splashViewModel.getMyInfo(this)
+        splashViewModel.isMyInfoLoaded.observe(this, Observer {
+            isMyInfoLoaded = it
         })
+
+
+
 
         val myHandler = Handler(Looper.getMainLooper())
 
