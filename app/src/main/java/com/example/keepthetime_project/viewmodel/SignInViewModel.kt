@@ -22,10 +22,11 @@ class SignInViewModel : ViewModel() {
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
-
+    init {
+        _errorMessage.value = ""
+    }
 
     fun getSignIn(context: Context, inputEmail: String, inputPw: String) {
-        _errorMessage.value = ""
 
         ServerAPI.apiList(context).postRequestLogin(inputEmail, inputPw)
             .enqueue(object : Callback<BasicResponse> {

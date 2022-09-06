@@ -2,11 +2,13 @@ package com.example.keepthetime_project
 
 import android.content.Intent
 import android.os.Bundle
+import com.example.keepthetime_project.adapters.FriendViewPagerAdapter
 import com.example.keepthetime_project.adapters.MyFriendAdapter
 import com.example.keepthetime_project.databinding.ActivityManageMyFriendsBinding
 import com.example.keepthetime_project.datas.BasicResponse
 import com.example.keepthetime_project.datas.UserData
 import com.example.keepthetime_project.utils.ContextUtil
+import com.google.android.material.tabs.TabLayoutMediator
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,9 +17,7 @@ class ManageMyFriendsActivity : BaseActivity() {
 
     private lateinit var binding : ActivityManageMyFriendsBinding
 
-    val myFriendList = ArrayList<UserData>()
-
-    lateinit var mAdapter : MyFriendAdapter
+    lateinit var mAdapter : FriendViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,31 +39,18 @@ class ManageMyFriendsActivity : BaseActivity() {
     }
 
     override fun setValues() {
-        getMyFriendListFromServer()
 
-        mAdapter = MyFriendAdapter(mContext, R.layout.my_friend_list_item, myFriendList)
-        binding.myFriendsListView.adapter = mAdapter
+        mAdapter = FriendViewPagerAdapter(this)
+        binding.friendViewPager.adapter = mAdapter
 
-
-    }
-
-    fun getMyFriendListFromServer(){
-        apiList.getRequestFriendList("all").enqueue(object : Callback<BasicResponse>{
-            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
-                if(response.isSuccessful){
-                    response.body()?.let {
-                        myFriendList.addAll(it.data.friends)
-
-                        mAdapter.notifyDataSetChanged()
-                    }
-                }
+        TabLayoutMediator(binding.friendTabLayout, binding.friendViewPager){ tab, position ->
+            when(position){
+                0 -> tab.text = "약속목록"
+                1 -> tab.text = "내프로필"
             }
+        }.attach()
 
-            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
 
-            }
-
-        })
 
     }
 

@@ -62,8 +62,6 @@ class SignInActivity : BaseActivity() {
                 Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
             }
 
-            Log.d("yj", "code : ${it.code} , message : ${it.message}")
-
         })
 
         sighInViewModel.errorMessage.observe(this, Observer {
