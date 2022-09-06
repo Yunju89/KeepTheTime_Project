@@ -24,7 +24,7 @@ class SplashViewModel : ViewModel() {
 
     fun getMyInfo(context: Context) {
 
-        ServerAPI.apiList().getRequestMyInfo(ContextUtil.getLoginUserToken(context))
+        ServerAPI.apiList(context).getRequestMyInfo()
             .enqueue(object : Callback<BasicResponse> {
                 override fun onResponse(
                     call: Call<BasicResponse>,

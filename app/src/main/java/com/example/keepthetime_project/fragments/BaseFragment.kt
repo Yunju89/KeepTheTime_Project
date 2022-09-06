@@ -18,7 +18,7 @@ abstract class BaseFragment : Fragment(){
 
         mContext = requireContext()
 
-        val retrofit = ServerAPI.getRetrofit() // = retrofit 객체 자체
+        val retrofit = ServerAPI.getRetrofit(mContext) // = retrofit 객체 자체
         apiList = retrofit.create(APIList::class.java)
 
 

@@ -32,7 +32,7 @@ class SearchUserActivity : BaseActivity() {
         binding.btnSearch.setOnClickListener {
             val inputNickName = binding.edtNickname.text.toString()
 
-            apiList.getRequestSearchUser(ContextUtil.getLoginUserToken(mContext), inputNickName).enqueue(object : Callback<BasicResponse>{
+            apiList.getRequestSearchUser(inputNickName).enqueue(object : Callback<BasicResponse>{
                 override fun onResponse(
                     call: Call<BasicResponse>,
                     response: Response<BasicResponse>

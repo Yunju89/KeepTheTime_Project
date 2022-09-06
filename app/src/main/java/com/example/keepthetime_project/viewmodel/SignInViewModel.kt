@@ -27,7 +27,7 @@ class SignInViewModel : ViewModel() {
     fun getSignIn(context: Context, inputEmail: String, inputPw: String) {
         _errorMessage.value = ""
 
-        ServerAPI.apiList().postRequestLogin(inputEmail, inputPw)
+        ServerAPI.apiList(context).postRequestLogin(inputEmail, inputPw)
             .enqueue(object : Callback<BasicResponse> {
                 override fun onResponse(
                     call: Call<BasicResponse>,

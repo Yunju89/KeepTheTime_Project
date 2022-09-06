@@ -37,7 +37,7 @@ class SignupActivity : BaseActivity() {
             val inputNickname = binding.edtNickname.text.toString()
 
             sighUpViewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
-            sighUpViewModel.getSighUp(inputEmail, inputPw, inputNickname)
+            sighUpViewModel.getSighUp(mContext ,inputEmail, inputPw, inputNickname)
             sighUpViewModel.sighUpSuccess.observe(this, Observer {
 
                 if(it == true){

@@ -1,5 +1,6 @@
 package com.example.keepthetime_project.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,9 +21,9 @@ class SignUpViewModel : ViewModel() {
         _sighUpSuccess.value = false
     }
 
-    fun getSighUp(inputEmail:String, inputPw:String, inputNickName:String){
+    fun getSighUp(context : Context, inputEmail:String, inputPw:String, inputNickName:String){
 
-        ServerAPI.apiList().putRequestSignup(inputEmail, inputPw,inputNickName).enqueue(object : Callback<BasicResponse>{
+        ServerAPI.apiList(context).putRequestSignup(inputEmail, inputPw,inputNickName).enqueue(object : Callback<BasicResponse>{
             override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
 
                 _sighUpSuccess.value = response.isSuccessful

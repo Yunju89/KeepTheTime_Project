@@ -17,7 +17,10 @@ abstract class BaseActivity() : AppCompatActivity() {
 
         mContext = this
 
-        apiList = ServerAPI.apiList()
+        val retrofit = ServerAPI.getRetrofit(mContext)
+        apiList = retrofit.create(APIList::class.java)
+
+
 
     }
 
