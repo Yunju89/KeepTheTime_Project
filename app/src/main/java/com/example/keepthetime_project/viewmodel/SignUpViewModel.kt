@@ -12,32 +12,78 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SignUpViewModel : ViewModel() {
-    private var _sighUpSuccess = MutableLiveData<Boolean>()
-    val sighUpSuccess : LiveData<Boolean>
+    private var _sighUpSuccess = MutableLiveData<BasicResponse>()
+    val sighUpSuccess: LiveData<BasicResponse>
         get() = _sighUpSuccess
 
 
-    init {
-        _sighUpSuccess.value = false
+    fun getSighUp(context: Context, inputEmail: String, inputPw: String, inputNickName: String) {
+
+        ServerAPI.apiList(context).putRequestSignup(inputEmail, inputPw, inputNickName)
+            .enqueue(object : Callback<BasicResponse> {
+                override fun onResponse(
+                    call: Call<BasicResponse>,
+                    response: Response<BasicResponse>
+                ) {
+
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            _sighUpSuccess.value = it
+                        }
+
+                    } else {
+                        response.errorBody()?.let {
+                            val jsonObj = JSONObject(it.string())
+                            val message = jsonObj.getString("message")
+                            val basicResponse = BasicResponse(message = message)
+
+                            _sighUpSuccess.value = basicResponse
+
+                        }
+                    }
+
+                }
+
+                override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+                }
+
+            })
     }
 
-    fun getSighUp(context : Context, inputEmail:String, inputPw:String, inputNickName:String){
 
-        ServerAPI.apiList(context).putRequestSignup(inputEmail, inputPw,inputNickName).enqueue(object : Callback<BasicResponse>{
-            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+    private var _emailCheck = MutableLiveData<BasicResponse>()
+    val emailCheck: LiveData<BasicResponse>
+        get() = _emailCheck
 
-                _sighUpSuccess.value = response.isSuccessful
-            }
+    fun getEmailCheck(context: Context, inputEmail: String) {
+        ServerAPI.apiList(context).getRequestUserCheck("EMAIL", inputEmail)
+            .enqueue(object : Callback<BasicResponse> {
+                override fun onResponse(
+                    call: Call<BasicResponse>,
+                    response: Response<BasicResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            _emailCheck.value = it
+                        }
+                    } else {
+                        response.errorBody()?.let {
+                            val jsonObj = JSONObject(it.string())
+                            val message = jsonObj.getString("message")
+                            val basicResponse = BasicResponse(message = message)
+                            _emailCheck.value = basicResponse
 
-            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+                        }
+                    }
+                }
 
-            }
+                override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
 
-        })
+                }
+
+            })
     }
-
-
-
 
 
 }

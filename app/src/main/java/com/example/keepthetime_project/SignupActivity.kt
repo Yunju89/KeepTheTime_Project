@@ -6,22 +6,20 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.keepthetime_project.databinding.ActivitySignupBinding
-import com.example.keepthetime_project.datas.BasicResponse
 import com.example.keepthetime_project.viewmodel.SignUpViewModel
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SignupActivity : BaseActivity() {
 
-    private lateinit var binding : ActivitySignupBinding
+    private lateinit var binding: ActivitySignupBinding
     lateinit var sighUpViewModel: SignUpViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        sighUpViewModel = ViewModelProvider(this)[SignUpViewModel::class.java]
 
         setEvents()
         setValues()
@@ -36,16 +34,18 @@ class SignupActivity : BaseActivity() {
             val inputPw = binding.edtPassword.text.toString()
             val inputNickname = binding.edtNickname.text.toString()
 
-            sighUpViewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
-            sighUpViewModel.getSighUp(mContext ,inputEmail, inputPw, inputNickname)
-            sighUpViewModel.sighUpSuccess.observe(this, Observer {
-
-                if(it == true){
-                    Toast.makeText(this, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-
-            })
+            if (inputEmail.isEmpty()) {
+                Toast.makeText(mContext, "이메일을 입력하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (inputPw.isEmpty()) {
+                Toast.makeText(mContext, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (inputNickname.isEmpty()) {
+                Toast.makeText(mContext, "닉네임을 입력하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else {
+                sighUpViewModel.getSighUp(mContext, inputEmail, inputPw, inputNickname)
+            }
 
 
         }
@@ -54,47 +54,43 @@ class SignupActivity : BaseActivity() {
 
             val inputEmail = binding.edtEmail.text.toString()
 
-            if(inputEmail.isEmpty()){
+            if (inputEmail.isEmpty()) {
                 Toast.makeText(mContext, "이메일을 입력하세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
+            } else {
+                sighUpViewModel.getEmailCheck(mContext, inputEmail)
             }
-            else{
-                apiList.getRequestUserCheck("EMAIL", inputEmail).enqueue(object : Callback<BasicResponse>{
-                    override fun onResponse(
-                        call: Call<BasicResponse>,
-                        response: Response<BasicResponse>
-                    ) {
-                        if(response.isSuccessful){
-                            response.body()?.let {
-                                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
-                                it.message?.let { it1 -> Log.d("yj", it1) }
-                            }
-                        }else{
-                            response.errorBody()?.let {
-                                val jsonObj = JSONObject(it.string())
-                                val message = jsonObj.getString("message")
 
-                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
-                                Log.d("yj", message)
 
-                            }
-                        }
-                    }
-
-                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-
-                    }
-
-                })
-            }
-            
-
-            
         }
 
     }
 
     override fun setValues() {
+        observe()
+    }
+
+    private fun observe() {
+        sighUpViewModel.sighUpSuccess.observe(this, Observer {
+
+            if (it.code == 200) {
+                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+            }
+            Log.d("yj", "sighUp : ${it.message}")
+        })
+
+
+        sighUpViewModel.emailCheck.observe(this, Observer {
+
+            Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+            Log.d("yj", "emailCheck : ${it.message}")
+
+        })
 
     }
+
+
 }
