@@ -4,25 +4,23 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.keepthetime_project.ManageMyFriendsActivity
 import com.example.keepthetime_project.SignInActivity
 import com.example.keepthetime_project.databinding.FragmentMyProfileBinding
-import com.example.keepthetime_project.datas.BasicResponse
+import com.example.keepthetime_project.fragmentviewmodel.MyProfileViewModel
 import com.example.keepthetime_project.utils.ContextUtil
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MyProfileFragment : BaseFragment() {
 
-    private var mBinding : FragmentMyProfileBinding? = null
+    private var mBinding: FragmentMyProfileBinding? = null
     private val binding get() = mBinding!!
+    private val myProfileViewModel by viewModels<MyProfileViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +48,8 @@ class MyProfileFragment : BaseFragment() {
                 .setPositiveButton("예", DialogInterface.OnClickListener { dialog, which ->
                     ContextUtil.setLoginUserToken(mContext, "")
                     val myIntent = Intent(mContext, SignInActivity::class.java)
-                    myIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    myIntent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(myIntent)
 
 
@@ -70,34 +69,15 @@ class MyProfileFragment : BaseFragment() {
 
     override fun setValues() {
 
-        apiList.getRequestMyInfo().enqueue(object : Callback<BasicResponse>{
-            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
-                if(response.isSuccessful){
-                    response.body()?.let {
-                        it.data?.let {  dataResponse ->
-                            Log.d("yj", "LoginUser : ${dataResponse.user.nick_name}")
+        myProfileViewModel.getMyInfo(mContext)
+        observer()
+    }
 
-                            binding.txtNickname.text = dataResponse.user.nick_name
-                            Glide.with(mContext).load(dataResponse.user.profile_img).into(binding.imgProfile)
-                        }
-
-                    }
-                }
-                else{
-                    response.errorBody()?.let {
-                        val jsonObj = JSONObject(it.string())
-                        val message = jsonObj.getString("message")
-                        Log.d("yj", "myInfo400 : $message")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-                Log.d("yj", "responseFail : 실패")
-            }
-
+    private fun observer() {
+        myProfileViewModel.myProfile.observe(viewLifecycleOwner, Observer {
+            binding.txtNickname.text = it.nick_name
+            Glide.with(mContext).load(it.profile_img).into(binding.imgProfile)
         })
-
     }
 
     override fun onDestroy() {
