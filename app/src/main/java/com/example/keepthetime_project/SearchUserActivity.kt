@@ -1,14 +1,21 @@
 package com.example.keepthetime_project
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.example.keepthetime_project.adapters.SearchUserRecyclerAdapter
+import com.example.keepthetime_project.api.ServerAPI
 import com.example.keepthetime_project.databinding.ActivitySearchUserBinding
+import com.example.keepthetime_project.datas.BasicResponse
 import com.example.keepthetime_project.datas.UserData
+import com.example.keepthetime_project.interfaces.AddFriendListener
 import com.example.keepthetime_project.viewmodel.SearchUserViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class SearchUserActivity : BaseActivity() {
+class SearchUserActivity : BaseActivity(), AddFriendListener {
     private lateinit var binding: ActivitySearchUserBinding
 
     private val mSearchUserList = ArrayList<UserData>()
@@ -22,7 +29,7 @@ class SearchUserActivity : BaseActivity() {
 
         setEvents()
         setValues()
-
+        observer()
     }
 
     override fun setEvents() {
@@ -36,9 +43,8 @@ class SearchUserActivity : BaseActivity() {
     }
 
     override fun setValues() {
-        observer()
 
-        mAdapter = SearchUserRecyclerAdapter(mContext, mSearchUserList)
+        mAdapter = SearchUserRecyclerAdapter(mContext, mSearchUserList, this)
         binding.userListRecyclerView.adapter = mAdapter
 
 
@@ -51,6 +57,18 @@ class SearchUserActivity : BaseActivity() {
                 mAdapter.notifyDataSetChanged()
             }
         })
+        
+        searchUserViewModel.addFriend.observe(this, Observer { 
+            if(it.code == 200){
+                Toast.makeText(mContext, "친구 요청을 전송하였습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
+
+    override fun btnAddFriend(id: Int) {
+        searchUserViewModel.callAddFriend(mContext, id)
+
+    }
+
 
 }

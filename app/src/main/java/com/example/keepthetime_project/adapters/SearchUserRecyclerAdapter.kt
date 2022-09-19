@@ -14,13 +14,15 @@ import com.example.keepthetime_project.R
 import com.example.keepthetime_project.api.ServerAPI
 import com.example.keepthetime_project.datas.BasicResponse
 import com.example.keepthetime_project.datas.UserData
+import com.example.keepthetime_project.interfaces.AddFriendListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class SearchUserRecyclerAdapter(
     val mContext : Context,
-    val mList : List<UserData>
+    val mList : List<UserData>,
+    val listener: AddFriendListener
 ) : RecyclerView.Adapter<SearchUserRecyclerAdapter.MyViewHolder>() {
 
     inner class MyViewHolder(view : View) : RecyclerView.ViewHolder(view){
@@ -58,21 +60,8 @@ class SearchUserRecyclerAdapter(
             }
 
             btnAddFriend.setOnClickListener {
-                ServerAPI.apiList(mContext).postRequestAddFriend(data.id).enqueue(object : Callback<BasicResponse>{
-                    override fun onResponse(
-                        call: Call<BasicResponse>,
-                        response: Response<BasicResponse>
-                    ) {
-                        if(response.isSuccessful){
-                            Toast.makeText(mContext, "친구 요청을 보냈습니다.", Toast.LENGTH_SHORT).show()
-                        }
 
-                    }
-
-                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-                    }
-
-                })
+                listener.btnAddFriend(data.id)
 
             }
 

@@ -38,4 +38,25 @@ class SearchUserViewModel : ViewModel() {
             })
     }
 
+    private var _addFriend = MutableLiveData<BasicResponse>()
+    val addFriend : LiveData<BasicResponse>
+        get() = _addFriend
+
+    fun callAddFriend(context: Context, id: Int){
+        ServerAPI.apiList(context).postRequestAddFriend(id).enqueue(object : Callback<BasicResponse>{
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+                if(response.isSuccessful){
+                    response.body()?.let {
+                        _addFriend.value = it
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+            }
+
+        })
+    }
 }
