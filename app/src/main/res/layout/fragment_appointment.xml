@@ -5,9 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".fragments.AppointmentFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="appointment"/>
+        android:layout_height="match_parent"/>
 
+    <Button
+        android:id="@+id/btnAppointment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:text="약속 등록"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"/>
 </FrameLayout>

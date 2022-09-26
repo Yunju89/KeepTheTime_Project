@@ -1,11 +1,14 @@
 package com.example.keepthetime_project.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.keepthetime_project.EditAppointmentActivity
 import com.example.keepthetime_project.R
+import com.example.keepthetime_project.databinding.ActivityEditAppointmentBinding
 import com.example.keepthetime_project.databinding.FragmentAppointmentBinding
 
 class AppointmentFragment : BaseFragment() {
@@ -31,6 +34,11 @@ class AppointmentFragment : BaseFragment() {
     }
 
     override fun setEvents() {
+
+        binding.btnAppointment.setOnClickListener {
+            val myIntent = Intent(mContext, EditAppointmentActivity::class.java)
+            startActivity(myIntent)
+        }
 
     }
 
