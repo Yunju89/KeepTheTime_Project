@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.keepthetime_project.R
@@ -15,9 +16,10 @@ import com.example.keepthetime_project.databinding.FragmentMyProfileBinding
 import com.example.keepthetime_project.databinding.FragmentRequestedUsersBinding
 import com.example.keepthetime_project.datas.UserData
 import com.example.keepthetime_project.fragmentviewmodel.RequestUserViewModel
+import com.example.keepthetime_project.interfaces.AcceptOrDenyListener
 
 
-class RequestedUsersFragment : BaseFragment() {
+class RequestedUsersFragment : BaseFragment(), AcceptOrDenyListener {
 
     private var mBinding : FragmentRequestedUsersBinding? = null
     private val binding get() = mBinding!!
@@ -51,7 +53,7 @@ class RequestedUsersFragment : BaseFragment() {
         observer()
 
 //        나에게 친구 요청한 사람 목록 > 리싸이클러뷰로 보여주기
-        mRequestUserAdapter = RequestUserRecyclerAdapter(mContext, requestList)
+        mRequestUserAdapter = RequestUserRecyclerAdapter(mContext, requestList, this)
         binding.requestUsersRecyclerView.adapter = mRequestUserAdapter
 
     }
@@ -64,6 +66,22 @@ class RequestedUsersFragment : BaseFragment() {
             requestList.addAll(it)
             mRequestUserAdapter.notifyDataSetChanged()
         })
+
+        requestUserViewModel.acceptOrDeny.observe(viewLifecycleOwner, Observer {
+            if(it.code == 200){
+                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+            }
+            requestUserViewModel.getRequestUserData(mContext)
+        })
+
+    }
+
+    override fun AcceptFriend(id: Int, type: String) {
+        requestUserViewModel.getRequestAcceptOrDeny(mContext, id, type)
+    }
+
+    override fun DenyFriend(id: Int ,type: String) {
+        requestUserViewModel.getRequestAcceptOrDeny(mContext, id, type)
     }
 
 }

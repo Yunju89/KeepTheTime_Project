@@ -59,6 +59,7 @@
         android:id="@+id/btnAccept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:tag="수락"
         android:text="수락"/>
 
     <Button
@@ -66,6 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
+        android:tag="거절"
         android:text="거절"/>
 
 

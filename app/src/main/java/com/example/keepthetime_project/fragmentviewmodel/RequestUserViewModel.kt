@@ -37,4 +37,26 @@ class RequestUserViewModel : ViewModel() {
 
             })
     }
+
+
+    private var _acceptOrDeny = MutableLiveData<BasicResponse>()
+    val acceptOrDeny : LiveData<BasicResponse>
+        get() = _acceptOrDeny
+
+    fun getRequestAcceptOrDeny(context: Context, id: Int, type: String){
+        ServerAPI.apiList(context).putRequestAcceptOrDenyFriendRequest(id, type).enqueue(object : Callback<BasicResponse>{
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+                if(response.isSuccessful){
+                    response.body()?.let {
+                        _acceptOrDeny.value = it
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+            }
+
+        })
+    }
 }

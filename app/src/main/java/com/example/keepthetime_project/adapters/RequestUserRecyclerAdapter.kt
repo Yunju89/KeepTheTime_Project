@@ -1,6 +1,7 @@
 package com.example.keepthetime_project.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.keepthetime_project.R
 import com.example.keepthetime_project.datas.UserData
+import com.example.keepthetime_project.interfaces.AcceptOrDenyListener
 
 class RequestUserRecyclerAdapter(
     val mContext: Context,
-    val mList: List<UserData>
+    val mList: List<UserData>,
+    val listener : AcceptOrDenyListener
 ) : RecyclerView.Adapter<RequestUserRecyclerAdapter.MyViewHolder>() {
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -52,7 +55,24 @@ class RequestUserRecyclerAdapter(
 
                 }
             }
-            
+
+//            tag 사용해서 클릭 구현하기
+            val onClick = View.OnClickListener {
+                val tagStr = it.tag.toString()
+                Log.d("yj", "클릭 버튼 확인하기 : $tagStr")
+
+                when (tagStr) {
+                    "수락" -> {
+                        listener.AcceptFriend(data.id, tagStr)
+                    }
+                    "거절" -> {
+                        listener.DenyFriend(data.id, tagStr)
+                    }
+               }
+            }
+
+            btnAccept.setOnClickListener(onClick)
+            btnDeny.setOnClickListener(onClick)
 
         }
 
