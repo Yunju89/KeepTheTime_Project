@@ -1,6 +1,7 @@
 package com.example.keepthetime_project
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
@@ -30,6 +31,7 @@ class SearchUserActivity : BaseActivity(), AddFriendListener {
         setEvents()
         setValues()
         observer()
+
     }
 
     override fun setEvents() {
@@ -53,6 +55,7 @@ class SearchUserActivity : BaseActivity(), AddFriendListener {
     private fun observer() {
         searchUserViewModel.userList.observe(this, Observer { basicResponse ->
             basicResponse.data?.let {
+                mSearchUserList.clear()
                 mSearchUserList.addAll(it.users)
                 mAdapter.notifyDataSetChanged()
             }
@@ -61,13 +64,15 @@ class SearchUserActivity : BaseActivity(), AddFriendListener {
         searchUserViewModel.addFriend.observe(this, Observer { 
             if(it.code == 200){
                 Toast.makeText(mContext, "친구 요청을 전송하였습니다.", Toast.LENGTH_SHORT).show()
+            }else if(it.code == 400){
+                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     override fun btnAddFriend(id: Int) {
         searchUserViewModel.callAddFriend(mContext, id)
-
+        Log.d("yj", "친구추가 버튼 눌림 $id")
     }
 
 

@@ -45,8 +45,8 @@ class ManageMyFriendsActivity : BaseActivity() {
 
         TabLayoutMediator(binding.friendTabLayout, binding.friendViewPager){ tab, position ->
             when(position){
-                0 -> tab.text = "약속목록"
-                1 -> tab.text = "내프로필"
+                0 -> tab.text = "내 친구 목록"
+                1 -> tab.text = "친구 요청 확인"
             }
         }.attach()
 
