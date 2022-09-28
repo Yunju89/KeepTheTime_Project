@@ -1,8 +1,10 @@
 package com.example.keepthetime_project
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.DatePicker
+import android.widget.TimePicker
 import com.example.keepthetime_project.databinding.ActivityEditAppointmentBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,6 +48,26 @@ class EditAppointmentActivity : BaseActivity() {
 
         }
 
+        binding.txtTime.setOnClickListener {
+            val timeSet = object : TimePickerDialog.OnTimeSetListener{
+                override fun onTimeSet(p0: TimePicker?, hourOfDay: Int, minute: Int) {
+
+                    mSelectedAppointmentDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    mSelectedAppointmentDateTime.set(Calendar.MINUTE, minute)
+
+                    val simpleDate = SimpleDateFormat("a h시 mm분")
+                    binding.txtTime.text = simpleDate.format(mSelectedAppointmentDateTime.time)
+
+                }
+            }
+
+            val timePickerDialog = TimePickerDialog(
+                mContext,
+                timeSet,
+                12,0,false
+                ).show()
+        }
+        
     }
 
     override fun setValues() {
