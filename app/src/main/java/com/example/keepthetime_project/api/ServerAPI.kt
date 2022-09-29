@@ -1,11 +1,14 @@
 package com.example.keepthetime_project.api
 
 import android.content.Context
+import android.webkit.DateSorter
 import com.example.keepthetime_project.utils.ContextUtil
+import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 class ServerAPI {
 
@@ -38,11 +41,19 @@ class ServerAPI {
                 .addInterceptor(interceptor)
                 .build()
 
+//            Date 자료형으로 파싱 => String yyyy-MM-dd HH:mm:ss
+
+            val gson = GsonBuilder()
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .registerTypeAdapter(
+                    Date::class.java,    // Date 클래스로 파싱 요청
+                    DateDeserializer()
+                ).create()
 
             if(retrofit == null){
                 retrofit = Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))  // gson 라이브러리 결합, Date 파싱요청
                     .client(myClient)   // 인터셉터 부착해둔 클라이언트로 통신
                     .build()
             }

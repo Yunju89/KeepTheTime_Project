@@ -1,8 +1,10 @@
 package com.example.keepthetime_project.datas
 
+import java.util.*
+
 data class AppointmentsData(
     val created_at: String,
-    val datetime: String,
+    val datetime: Date,
     val id: Int,
     val invited_friends: List<UserData>,
     val latitude: Double,

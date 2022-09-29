@@ -19,6 +19,7 @@ import com.example.keepthetime_project.interfaces.AddFriendListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 
 class MyAppointmentRecyclerAdapter(
     val mContext : Context,
@@ -35,8 +36,11 @@ class MyAppointmentRecyclerAdapter(
         fun bind(data : AppointmentsData){
 
             txtTitle.text = data.title
-            txtDate.text = data.datetime
             txtPlace.text = data.place
+
+            val simpleDate = SimpleDateFormat("yy년 M월 d일 a h시 m분")
+            txtDate.text = simpleDate.format(data.datetime)
+
 
         }
     }
