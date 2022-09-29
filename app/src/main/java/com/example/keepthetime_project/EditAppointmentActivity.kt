@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.example.keepthetime_project.databinding.ActivityEditAppointmentBinding
+import com.example.keepthetime_project.viewmodel.AddAppointmentViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
@@ -19,6 +21,7 @@ import java.util.*
 class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityEditAppointmentBinding
+    private val addAppointmentViewModel by viewModels<AddAppointmentViewModel>()
 
     private var marker : Marker? = null
     private var selectedLatLng : LatLng? = null
@@ -34,6 +37,7 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
         setEvents()
         setValues()
         setMap()
+        observer()
     }
 
     override fun setEvents() {
@@ -74,17 +78,71 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
             val timePickerDialog = TimePickerDialog(
                 mContext,
                 timeSet,
-                12,0,false
-                ).show()
+                12, 0, false
+            ).show()
         }
-        
+
+        binding.btnSave.setOnClickListener {
+
+            val inputTitle = binding.edtTitle.text.toString()
+            if(inputTitle.isEmpty()){
+                Toast.makeText(mContext, "약속 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if(binding.txtDate.text == "약속 일자"){
+            Toast.makeText(mContext, "일자를 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return@setOnClickListener
+        }
+            if(binding.txtDate.text == "약속 시간"){
+                Toast.makeText(mContext, "시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val now = Calendar.getInstance()
+            if(mSelectedAppointmentDateTime.timeInMillis < now.timeInMillis){
+                Toast.makeText(mContext, "현재 이후의 시간으로 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val inputPlaceName = binding.edtPlaceName.text.toString()
+            if(inputPlaceName.isEmpty()){
+                Toast.makeText(mContext, "장소 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if(selectedLatLng == null){
+                Toast.makeText(mContext, "약속 장소를 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val simpleDate = SimpleDateFormat("yyyy-MM-dd HH:mm")
+
+            addAppointmentViewModel.postAddAppointment(
+                mContext,
+                inputTitle,
+                simpleDate.format(mSelectedAppointmentDateTime.time),
+                inputPlaceName,
+                selectedLatLng!!.latitude,
+                selectedLatLng!!.longitude
+            )
+        }
+
     }
 
     override fun setValues() {
 
     }
 
-    private fun setMap(){
+    private fun observer(){
+
+        addAppointmentViewModel.appointment.observe(this, androidx.lifecycle.Observer {
+            if(it.code == 200){
+                Toast.makeText(mContext, "약속 등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
+            }else{
+                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun setMap() {
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map) as MapFragment?
             ?: MapFragment.newInstance().also {
@@ -103,13 +161,12 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
         naverMap.moveCamera(cameraUpdate)
 
 //        마커 객체 생성 및 맵에 표시하기
-        marker = Marker()
-        marker?.position = coord
-        marker?.map = naverMap
-
-        selectedLatLng = coord
-
         naverMap.setOnMapClickListener { pointF, latLng ->
+
+//            마커 객체가 없을 시 새 마커 생성
+            if(marker == null){
+                marker = Marker()
+            }
 
             marker?.position = latLng
             marker?.map = naverMap
