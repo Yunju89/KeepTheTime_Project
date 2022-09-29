@@ -5,13 +5,23 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.DatePicker
 import android.widget.TimePicker
+import android.widget.Toast
 import com.example.keepthetime_project.databinding.ActivityEditAppointmentBinding
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
 import java.text.SimpleDateFormat
 import java.util.*
 
-class EditAppointmentActivity : BaseActivity() {
+class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityEditAppointmentBinding
+
+    private var marker : Marker? = null
+    private var selectedLatLng : LatLng? = null
 
     //    약속 시간 저장하는 멤버변수, 현재시간 세팅
     val mSelectedAppointmentDateTime = Calendar.getInstance()
@@ -23,7 +33,7 @@ class EditAppointmentActivity : BaseActivity() {
 
         setEvents()
         setValues()
-
+        setMap()
     }
 
     override fun setEvents() {
@@ -73,4 +83,41 @@ class EditAppointmentActivity : BaseActivity() {
     override fun setValues() {
 
     }
+
+    private fun setMap(){
+        val fm = supportFragmentManager
+        val mapFragment = fm.findFragmentById(R.id.map) as MapFragment?
+            ?: MapFragment.newInstance().also {
+                fm.beginTransaction().add(R.id.map, it).commit()
+            }
+
+        mapFragment.getMapAsync(this)
+    }
+
+    override fun onMapReady(naverMap: NaverMap) {
+
+//        임시 위,경도 - 서울역
+        val coord = LatLng(37.554706, 126.970794)
+
+        val cameraUpdate = CameraUpdate.scrollTo(coord)
+        naverMap.moveCamera(cameraUpdate)
+
+//        마커 객체 생성 및 맵에 표시하기
+        marker = Marker()
+        marker?.position = coord
+        marker?.map = naverMap
+
+        selectedLatLng = coord
+
+        naverMap.setOnMapClickListener { pointF, latLng ->
+
+            marker?.position = latLng
+            marker?.map = naverMap
+
+            selectedLatLng = latLng
+
+        }
+
+    }
+
 }
