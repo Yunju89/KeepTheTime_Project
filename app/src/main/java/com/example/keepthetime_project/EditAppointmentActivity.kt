@@ -3,6 +3,7 @@ package com.example.keepthetime_project
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
@@ -16,8 +17,13 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PathOverlay
+import com.odsay.odsayandroidsdk.API
+import com.odsay.odsayandroidsdk.ODsayData
+import com.odsay.odsayandroidsdk.ODsayService
+import com.odsay.odsayandroidsdk.OnResultCallbackListener
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
@@ -176,8 +182,62 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
             selectedLatLng = latLng
 
-//            coord ~ 선택지까지 직선 그리기 (naverMap PathOverlay)
+//            coord ~ 선택지까지 경로 그리기 (naverMap PathOverlay + ODSay 라이브러리)
 //            path 객채가 없을 시 새 객체 생성
+
+            val myODSayService =
+                ODsayService.init(mContext, "qiVt8z/WkU8uqSBTpRQe+DllZJUeVZiTYUrk+h10pz8")
+
+            myODSayService.requestSearchPubTransPath(
+                coord.longitude.toString(),
+                coord.latitude.toString(),
+                latLng.longitude.toString(),
+                latLng.latitude.toString(),
+                "0", null, "0",
+                object : OnResultCallbackListener{
+                    override fun onSuccess(p0: ODsayData?, p1: API?) {
+                        // ODSayData 파싱
+                        p0?.let {
+                            val resultObj = it.json.getJSONObject("result")
+                            val pathArray = resultObj.getJSONArray("path")
+                            val firstPath = pathArray.getJSONObject(0)   // 첫번째 경로 추출
+                            val subPathArray = firstPath.getJSONArray("subPath")    // 경로내보기
+
+                            val stationLatLngList = ArrayList<LatLng>() // 첫번째 경로 지나는 위,경도 값 저장 List
+                            stationLatLngList.add(coord) // 시작점 추가
+
+                            for(i in 0 until subPathArray.length()){    // 서브패스 배열 길이만큼 돌아
+                                val subPathObj = subPathArray.getJSONObject(i)
+                                if(!subPathObj.isNull("passStopList")){
+                                    val pathStopListObj = subPathObj.getJSONObject("passStopList")
+                                    val stationsList = pathStopListObj.getJSONArray("stations")
+
+                                    for (j in 0 until stationsList.length()){   // 경로 내 정거장 리스트 길이만큼 돌아서
+                                        val stationsObj = stationsList.getJSONObject(j)
+                                        val x = stationsObj.getString("x").toDouble()   // 경도 추출 lng
+                                        val y = stationsObj.getString("y").toDouble()   // 위도 추출 lat
+
+                                        stationLatLngList.add(LatLng(y,x))
+                                    }
+                                }
+
+                            }
+
+                            stationLatLngList.add(latLng) // 도착지 추가
+
+                            path?.coords = stationLatLngList
+                            path?.map = naverMap
+                        }
+
+                    }
+
+                    override fun onError(p0: Int, p1: String?, p2: API?) {
+
+                    }
+
+                }
+            )
+
             if (path == null) {
                 path = PathOverlay()
             }
