@@ -9,21 +9,18 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.keepthetime_project.databinding.ActivityEditAppointmentBinding
+import com.example.keepthetime_project.datas.odsaydata.Path
 import com.example.keepthetime_project.viewmodel.AddAppointmentViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.InfoWindow
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PathOverlay
-import com.odsay.odsayandroidsdk.API
-import com.odsay.odsayandroidsdk.ODsayData
-import com.odsay.odsayandroidsdk.ODsayService
-import com.odsay.odsayandroidsdk.OnResultCallbackListener
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
@@ -33,6 +30,12 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
     private var marker: Marker? = null
     private var selectedLatLng: LatLng? = null
     private var path: PathOverlay? = null
+    private lateinit var naverMap: NaverMap
+
+
+    //        임시 위도(lat(Y)),경도(long(X)) - 서울역
+    val coord = LatLng(37.554706, 126.970794)
+
 
     //    약속 시간 저장하는 멤버변수, 현재시간 세팅
     val mSelectedAppointmentDateTime = Calendar.getInstance()
@@ -141,14 +144,54 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun observer() {
 
-        addAppointmentViewModel.appointment.observe(this, androidx.lifecycle.Observer {
+        addAppointmentViewModel.appointment.observe(this) {
             if (it.code == 200) {
                 Toast.makeText(mContext, "약속 등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             } else {
                 Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
             }
-        })
+        }
+
+        addAppointmentViewModel.odsayData.observe(this) { result ->
+
+            val stationList = ArrayList<LatLng>()
+            val firstPath : Path = result.path[0]
+            /**
+             * path 첫번째 경로 = 추천경로 기준으로 정보 가져오기
+             * subPath 내 passStopList 가  null 인 경우가 있어, passStopList 있을경우에만 forEach 로 꺼내오기
+             */
+            stationList.add(coord)
+            firstPath.subPath.forEach { subPath ->
+                subPath.passStopList?.stations?.forEach {
+                    stationList.add(LatLng(it.y.toDouble(), it.x.toDouble()))
+                }
+            }
+
+            selectedLatLng?.let { stationList.add(it) }
+
+            path?.coords = stationList
+            path?.map = naverMap
+
+
+            val totalTime = firstPath.info.totalTime
+            val payment = firstPath.info.payment
+
+            val infoWindow = InfoWindow()   // 네이버지도 정보창 띄우기
+            infoWindow.adapter = object : InfoWindow.DefaultTextAdapter(mContext) {
+                override fun getText(p0: InfoWindow): CharSequence {
+                    return "총 시간 : $totalTime 분, 비용 : $payment 원"
+
+                }
+            }
+
+            infoWindow.open(marker!!)   //마커로 카메라 위치 옮기기. !! 는 좋은 방법 아님.
+            naverMap.moveCamera(
+                CameraUpdate.scrollTo(
+                    selectedLatLng!!
+                )
+            )
+        }
     }
 
     private fun setMap() {
@@ -163,8 +206,7 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(naverMap: NaverMap) {
 
-//        임시 위,경도 - 서울역
-        val coord = LatLng(37.554706, 126.970794)
+        this.naverMap = naverMap
 
         val cameraUpdate = CameraUpdate.scrollTo(coord)
         naverMap.moveCamera(cameraUpdate)
@@ -182,65 +224,22 @@ class EditAppointmentActivity : BaseActivity(), OnMapReadyCallback {
 
             selectedLatLng = latLng
 
+            Log.d("yj", latLng.toString())
 //            coord ~ 선택지까지 경로 그리기 (naverMap PathOverlay + ODSay 라이브러리)
 //            path 객채가 없을 시 새 객체 생성
 
-            val myODSayService =
-                ODsayService.init(mContext, "qiVt8z/WkU8uqSBTpRQe+DllZJUeVZiTYUrk+h10pz8")
-
-            myODSayService.requestSearchPubTransPath(
+            addAppointmentViewModel.getODSayResult(
+                mContext,
                 coord.longitude.toString(),
                 coord.latitude.toString(),
                 latLng.longitude.toString(),
                 latLng.latitude.toString(),
-                "0", null, "0",
-                object : OnResultCallbackListener{
-                    override fun onSuccess(p0: ODsayData?, p1: API?) {
-                        // ODSayData 파싱
-                        p0?.let {
-                            val resultObj = it.json.getJSONObject("result")
-                            val pathArray = resultObj.getJSONArray("path")
-                            val firstPath = pathArray.getJSONObject(0)   // 첫번째 경로 추출
-                            val subPathArray = firstPath.getJSONArray("subPath")    // 경로내보기
-
-                            val stationLatLngList = ArrayList<LatLng>() // 첫번째 경로 지나는 위,경도 값 저장 List
-                            stationLatLngList.add(coord) // 시작점 추가
-
-                            for(i in 0 until subPathArray.length()){    // 서브패스 배열 길이만큼 돌아
-                                val subPathObj = subPathArray.getJSONObject(i)
-                                if(!subPathObj.isNull("passStopList")){
-                                    val pathStopListObj = subPathObj.getJSONObject("passStopList")
-                                    val stationsList = pathStopListObj.getJSONArray("stations")
-
-                                    for (j in 0 until stationsList.length()){   // 경로 내 정거장 리스트 길이만큼 돌아서
-                                        val stationsObj = stationsList.getJSONObject(j)
-                                        val x = stationsObj.getString("x").toDouble()   // 경도 추출 lng
-                                        val y = stationsObj.getString("y").toDouble()   // 위도 추출 lat
-
-                                        stationLatLngList.add(LatLng(y,x))
-                                    }
-                                }
-
-                            }
-
-                            stationLatLngList.add(latLng) // 도착지 추가
-
-                            path?.coords = stationLatLngList
-                            path?.map = naverMap
-                        }
-
-                    }
-
-                    override fun onError(p0: Int, p1: String?, p2: API?) {
-
-                    }
-
-                }
             )
 
             if (path == null) {
                 path = PathOverlay()
             }
+
             path?.coords = listOf(      //빈 리스트를 만들어서,출발 / 도착지 지정
                 coord, latLng
             )
